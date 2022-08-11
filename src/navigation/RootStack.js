@@ -1,19 +1,18 @@
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as React from 'react';
 
 // drawer stack
 import DrawerStack from './DrawerStack';
 
 // screens
-import ModalHelp from '../screens/ModalHelp';
+import LoginScreen from '../screens/LoginScreen';
 import ModalQRCode from '../screens/ModalQRCode';
-import ModalTutorialBike from '../screens/ModalTutorialBike';
+import RegisterScreen from '../screens/RegisterScreen';
 
 const Stack = createNativeStackNavigator();
 
-export default () => (
-  <NavigationContainer>
+export default () => {
+  return (
     <Stack.Navigator
       screenOptions={{
         presentation: 'fullScreenModal'
@@ -26,14 +25,21 @@ export default () => (
           headerShown: false
         }}
       />
-
       <Stack.Screen
-        name="ModalHelp"
-        component={ModalHelp}
+        name="LoginScreen"
+        component={LoginScreen}
         options={{
           headerShown: false
         }}
       />
+      <Stack.Screen
+        name="RegisterScreen"
+        component={RegisterScreen}
+        options={{
+          headerShown: false
+        }}
+      />
+
       <Stack.Screen
         name="ModalQRCode"
         component={ModalQRCode}
@@ -41,13 +47,6 @@ export default () => (
           headerShown: false
         }}
       />
-      <Stack.Screen
-        name="ModalTutorialBike"
-        component={ModalTutorialBike}
-        options={{
-          headerShown: false
-        }}
-      />
     </Stack.Navigator>
-  </NavigationContainer>
-);
+  );
+};

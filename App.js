@@ -1,7 +1,11 @@
+import { NavigationContainer } from '@react-navigation/native';
+import * as SplashScreen from 'expo-splash-screen';
 import * as React from 'react';
 import { StatusBar } from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import { func } from './src/constants';
+import { persistor, store } from './src/redux/store';
 
 // root stack navigation
 import RootStack from './src/navigation/RootStack';
@@ -44,11 +48,17 @@ const App = () => {
   }
 
   return (
-    <React.Fragment>
-      <StatusBar barStyle="dark-content" />
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <NavigationContainer>
+          <React.Fragment>
+            <StatusBar barStyle="dark-content" />
 
-      <RootStack />
-    </React.Fragment>
+            <RootStack />
+          </React.Fragment>
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
   );
 };
 
