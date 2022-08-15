@@ -4,7 +4,6 @@ import { Text } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import { login } from '../apis/auth';
 import { getPassengerByPhone } from '../apis/passenger';
-import BackButton from '../components/BackButton';
 import Background from '../components/Background';
 import Button from '../components/Button';
 import Header from '../components/Header';
@@ -45,7 +44,6 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <Background>
-      <BackButton goBack={navigation.goBack} />
       <Logo />
       <Header>Welcome back.</Header>
       <TextInput

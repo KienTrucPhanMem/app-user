@@ -1,25 +1,26 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import TextInput from '../components/TextInput';
 import { colors, device, fonts } from '../constants';
 
 // icons
-import SvgTruck from './icons/Svg.Truck';
 
 const WhereTo = () => (
   <View style={styles.container}>
     <View style={styles.containerBanner}>
-      <Text style={styles.bannerText}>30% off, up to $6.00</Text>
-      <Text style={styles.bannerMuted}>3 days</Text>
+      <Text style={styles.bannerText}>Nhập địa chỉ bạn muốn đến</Text>
+      <Text style={styles.bannerMuted}>Bike</Text>
     </View>
 
     <View style={styles.containerInput}>
       <View style={styles.containerSquare}>
         <View style={styles.square} />
       </View>
-      <Text style={styles.text}>Where to?</Text>
-      <View style={styles.containerIcon}>
-        <SvgTruck />
-      </View>
+      <TextInput
+        returnKeyType="next"
+        onChangeText={(text) => {}}
+        placeholder="Đi đến"
+      />
     </View>
   </View>
 );

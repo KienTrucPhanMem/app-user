@@ -1,42 +1,33 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import { Linking, StyleSheet, Text, View } from 'react-native';
 import * as Location from 'expo-location';
+import PropTypes from 'prop-types';
+import * as React from 'react';
+import { Linking, StyleSheet, Text, View } from 'react-native';
 import MapView from 'react-native-maps';
 import { colors, device, fonts, gStyle } from '../constants';
 
 // components
-import RequestRideType from '../components/RequestRideType';
-import SelectRideType from '../components/SelectRideType';
-import TouchIcon from '../components/TouchIcon';
 import TouchText from '../components/TouchText';
 import WhereTo from '../components/WhereTo';
 
+import * as TaskManager from 'expo-task-manager';
 // icons
-import SvgCheckShield from '../components/icons/Svg.CheckShield';
-import SvgMenu from '../components/icons/Svg.Menu';
-import SvgQRCode from '../components/icons/Svg.QRCode';
 
 const { PROVIDER_GOOGLE } = MapView;
 
-const types = {
-  car: {
-    image: 'carSm',
-    imageLg: 'carLg',
-    text: 'Ride'
-  },
-  bike: {
-    image: 'bikeSm',
-    imageLg: 'bikeLg',
-    text: 'Bike'
-  }
-};
-
 const Home = ({ navigation }) => {
-  const [type, setType] = React.useState('car');
-  const [selectType, setSelectType] = React.useState(false);
   const [showMap, setShowMap] = React.useState(false);
   const [coordinates, setCoords] = React.useState({ lat: null, lon: null });
+
+  // TaskManager.defineTask(
+  //   'UPDATE_LOCATION',
+  //   ({ data: { locations }, error }) => {
+  //     if (error) {
+  //       // check `error.message` for more details.
+  //       return;
+  //     }
+  //     console.log('Received new locations', locations);
+  //   }
+  // );
 
   React.useEffect(() => {
     const getLocation = async () => {
@@ -65,9 +56,15 @@ const Home = ({ navigation }) => {
     getLocation().catch(console.error);
   }, []);
 
-  const toggleTypeModal = () => {
-    setSelectType(!selectType);
-  };
+  // React.useEffect(() => {
+  //   Location.startLocationUpdatesAsync('UPDATE_LOCATION', {
+  //     deferredUpdatesInterval: 300
+  //   });
+
+  //   return () => Location.stopLocationUpdatesAsync('UPDATE_LOCATION');
+  // }, []);
+
+  console.log(coordinates);
 
   return (
     <View style={gStyle.container}>
@@ -100,55 +97,7 @@ const Home = ({ navigation }) => {
         </View>
       )}
 
-      {type === 'bike' && (
-        <View style={styles.rightContainer}>
-          <View style={styles.icons}>
-            <TouchIcon
-              icon={<SvgQRCode />}
-              iconSize={20}
-              onPress={() => navigation.navigate('ModalQRCode')}
-              style={[styles.icon, styles.iconQRCode]}
-            />
-            <TouchIcon
-              icon={<SvgCheckShield />}
-              iconSize={20}
-              onPress={() => navigation.navigate('ModalTutorialBike')}
-              style={[styles.icon, styles.iconShield]}
-            />
-          </View>
-        </View>
-      )}
-
-      <View style={styles.header}>
-        <TouchIcon
-          icon={<SvgMenu />}
-          iconSize={32}
-          onPress={() => navigation.toggleDrawer()}
-        />
-        <RequestRideType
-          image={types[type].image}
-          onPress={toggleTypeModal}
-          text={types[type].text}
-        />
-
-        {type === 'car' && <View style={styles.placeholder} />}
-        {type === 'bike' && (
-          <TouchText
-            onPress={() => navigation.navigate('ModalHelp')}
-            style={styles.help}
-            text="Help"
-          />
-        )}
-      </View>
-
-      <SelectRideType
-        data={types}
-        onClose={toggleTypeModal}
-        onSelect={(selectedType) => setType(selectedType)}
-        visible={selectType}
-      />
-
-      {type === 'car' && <WhereTo />}
+      <WhereTo />
     </View>
   );
 };

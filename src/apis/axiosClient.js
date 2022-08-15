@@ -3,7 +3,7 @@ import queryString from 'query-string';
 import { store } from '../redux/store';
 
 const axiosClient = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL,
+  baseURL: 'https://ktpm-gateway.herokuapp.com',
   paramsSerializer: (params) => queryString.stringify(params)
 });
 
