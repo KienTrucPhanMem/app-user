@@ -18,16 +18,16 @@ const Home = ({ navigation }) => {
   const [showMap, setShowMap] = React.useState(false);
   const [coordinates, setCoords] = React.useState({ lat: null, lon: null });
 
-  // TaskManager.defineTask(
-  //   'UPDATE_LOCATION',
-  //   ({ data: { locations }, error }) => {
-  //     if (error) {
-  //       // check `error.message` for more details.
-  //       return;
-  //     }
-  //     console.log('Received new locations', locations);
-  //   }
-  // );
+  TaskManager.defineTask(
+    'UPDATE_LOCATION',
+    ({ data: { locations }, error }) => {
+      if (error) {
+        // check `error.message` for more details.
+        return;
+      }
+      console.log('Received new locations', locations);
+    }
+  );
 
   React.useEffect(() => {
     const getLocation = async () => {
@@ -56,13 +56,13 @@ const Home = ({ navigation }) => {
     getLocation().catch(console.error);
   }, []);
 
-  // React.useEffect(() => {
-  //   Location.startLocationUpdatesAsync('UPDATE_LOCATION', {
-  //     deferredUpdatesInterval: 300
-  //   });
+  React.useEffect(() => {
+    Location.startLocationUpdatesAsync('UPDATE_LOCATION', {
+      deferredUpdatesInterval: 300
+    });
 
-  //   return () => Location.stopLocationUpdatesAsync('UPDATE_LOCATION');
-  // }, []);
+    return () => Location.stopLocationUpdatesAsync('UPDATE_LOCATION');
+  }, []);
 
   console.log(coordinates);
 

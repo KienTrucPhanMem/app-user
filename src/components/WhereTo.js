@@ -1,29 +1,79 @@
 import * as React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { getPlaces } from '../apis/place';
 import TextInput from '../components/TextInput';
 import { colors, device, fonts } from '../constants';
 
 // icons
 
-const WhereTo = () => (
-  <View style={styles.container}>
-    <View style={styles.containerBanner}>
-      <Text style={styles.bannerText}>Nhập địa chỉ bạn muốn đến</Text>
-      <Text style={styles.bannerMuted}>Bike</Text>
-    </View>
+const WhereTo = () => {
+  const [places, setPlaces] = React.useState([]);
 
-    <View style={styles.containerInput}>
-      <View style={styles.containerSquare}>
-        <View style={styles.square} />
+  const debounceId = React.useRef();
+
+  const handleTextChange = (text) => {
+    if (debounceId.current) {
+      clearTimeout(debounceId.current);
+    }
+
+    debounceId.current = setTimeout(async () => {
+      if (!text) return;
+
+      console.log('Call api');
+
+      try {
+        const res = await getPlaces({
+          query: text,
+          country: 'VN',
+          limit: 5
+        });
+
+        setPlaces(res.data.data);
+      } catch (e) {
+        console.log(e);
+      }
+    }, 800);
+  };
+
+  const handlePlacePress = (place) => {
+    console.log(place);
+  };
+
+  console.log(places);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.containerBanner}>
+        <Text style={styles.bannerText}>Nhập địa chỉ bạn muốn đến</Text>
+        <Text style={styles.bannerMuted}>Bike</Text>
       </View>
-      <TextInput
-        returnKeyType="next"
-        onChangeText={(text) => {}}
-        placeholder="Đi đến"
-      />
+
+      <View style={styles.containerInput}>
+        <TextInput
+          returnKeyType="next"
+          onChangeText={handleTextChange}
+          placeholder="Đi đến"
+        />
+      </View>
+
+      {places.length > 0 && (
+        <View style={styles.placeList}>
+          {places.map((place, index) =>
+            place.number && place.street ? (
+              <Text
+                style={styles.placeItem}
+                key={index}
+                onPress={() => handlePlacePress(place)}
+              >{`${place.number || ''} ${place.street || ''} ${
+                place.county || ''
+              } ${place.region || ''} ${place.country || ''}`}</Text>
+            ) : null
+          )}
+        </View>
+      )}
     </View>
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -81,6 +131,16 @@ const styles = StyleSheet.create({
     borderLeftColor: colors.greyMercury,
     borderLeftWidth: 1,
     flex: 2
+  },
+  placeList: {
+    marginTop: 10,
+    backgroundColor: 'white',
+    borderRadius: 2,
+    padding: 16
+  },
+  placeItem: {
+    marginTop: 16,
+    fontSize: 16
   }
 });
 
