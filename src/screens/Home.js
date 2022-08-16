@@ -4,6 +4,8 @@ import * as React from 'react';
 import { Linking, StyleSheet, Text, View } from 'react-native';
 import MapView from 'react-native-maps';
 import { colors, device, fonts, gStyle } from '../constants';
+import { Polyline } from 'react-native-maps';
+import Button from '../components/Button';
 
 // components
 import TouchText from '../components/TouchText';
@@ -16,7 +18,36 @@ const { PROVIDER_GOOGLE } = MapView;
 
 const Home = ({ navigation }) => {
   const [showMap, setShowMap] = React.useState(false);
-  const [coordinates, setCoords] = React.useState({ lat: null, lon: null });
+  const [coordinates, setCoords] = React.useState({
+    latitude: null,
+    longitude: null,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01
+  });
+  const [destination, setDestination] = React.useState();
+  const [step, setStep] = React.useState(0);
+
+  const handlePlaceClick = (place) => {
+    if (place) {
+      setDestination({
+        latitude: place.latitude,
+        longitude: place.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01
+      });
+
+      setStep(1);
+    } else {
+      setDestination(undefined);
+      setStep(0);
+    }
+  };
+
+  const handleBooking = () => {
+    //Call api booking
+
+    setStep(2);
+  };
 
   TaskManager.defineTask(
     'UPDATE_LOCATION',
@@ -49,7 +80,11 @@ const Home = ({ navigation }) => {
 
       const { coords } = await Location.getCurrentPositionAsync();
 
-      setCoords({ lat: coords.latitude, lon: coords.longitude });
+      setCoords((state) => ({
+        ...state,
+        latitude: coords.latitude,
+        longitude: coords.longitude
+      }));
       setShowMap(true);
     };
 
@@ -72,15 +107,19 @@ const Home = ({ navigation }) => {
         <MapView
           followsUserLocation
           provider={PROVIDER_GOOGLE}
-          region={{
-            latitude: coordinates.lat,
-            longitude: coordinates.lon,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01
-          }}
+          region={coordinates}
           showsUserLocation
           style={styles.map}
-        />
+        >
+          {destination ? (
+            <Polyline
+              coordinates={[coordinates, destination]}
+              strokeColor={'21E1E1'}
+              strokeWidth={6}
+              lineDashPattern={[1]}
+            />
+          ) : null}
+        </MapView>
       )}
 
       {!showMap && (
@@ -97,7 +136,21 @@ const Home = ({ navigation }) => {
         </View>
       )}
 
-      <WhereTo />
+      {step !== 0 && (
+        <View style={styles.bookButton}>
+          {step === 1 && (
+            <Button mode="contained" onPress={handleBooking}>
+              Đặt xe
+            </Button>
+          )}
+
+          {step == 2 && (
+            <Text style={styles.findingDriver}>Đang tìm tài xế ...</Text>
+          )}
+        </View>
+      )}
+
+      <WhereTo onPlaceClick={handlePlaceClick} />
     </View>
   );
 };
@@ -175,6 +228,19 @@ const styles = StyleSheet.create({
   },
   iconShield: {
     backgroundColor: colors.white
+  },
+  bookButton: {
+    position: 'absolute',
+    bottom: 60,
+    width: device.width - 40,
+    alignSelf: 'center'
+  },
+  findingDriver: {
+    fontSize: 18,
+    backgroundColor: colors.green,
+    padding: 16,
+    borderRadius: 4,
+    color: colors.white
   }
 });
 

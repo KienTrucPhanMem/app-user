@@ -6,7 +6,7 @@ import { colors, device, fonts } from '../constants';
 
 // icons
 
-const WhereTo = () => {
+const WhereTo = ({ onPlaceClick }) => {
   const [places, setPlaces] = React.useState([]);
 
   const debounceId = React.useRef();
@@ -17,7 +17,11 @@ const WhereTo = () => {
     }
 
     debounceId.current = setTimeout(async () => {
-      if (!text) return;
+      if (!text) {
+        setPlaces([]);
+        if (onPlaceClick) onPlaceClick(undefined);
+        return;
+      }
 
       console.log('Call api');
 
@@ -36,7 +40,10 @@ const WhereTo = () => {
   };
 
   const handlePlacePress = (place) => {
-    console.log(place);
+    if (onPlaceClick) {
+      setPlaces([]);
+      onPlaceClick(place);
+    }
   };
 
   console.log(places);
