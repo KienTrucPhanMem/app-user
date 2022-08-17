@@ -8,3 +8,12 @@ export const getPlaces = async (options) => {
     }
   });
 };
+
+export const getPlacesReverse = async (options) => {
+  return axios.get(`http://api.positionstack.com/v1/reverse`, {
+    params: {
+      access_key: '9e5f5d2ecb1b1055bcda9086c054de17',
+      ...options
+    }
+  });
+};

@@ -9,6 +9,7 @@ export const register = async ({ phone, password, fullName, email }) => {
     phone,
     password,
     fullName,
-    email
+    email,
+    role: 'USER'
   });
 };

@@ -6,7 +6,8 @@ const initialState = {
   fullName: '',
   email: '',
   gender: 'MALE',
-  FCM_token: ''
+  FCM_token: '',
+  _id: ''
 };
 
 export const authSlice = createSlice({
