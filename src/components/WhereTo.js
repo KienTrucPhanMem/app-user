@@ -8,10 +8,13 @@ import { colors, device, fonts } from '../constants';
 
 const WhereTo = ({ onPlaceClick }) => {
   const [places, setPlaces] = React.useState([]);
+  const [value, setValue] = React.useState('');
 
   const debounceId = React.useRef();
 
   const handleTextChange = (text) => {
+    setValue(text);
+
     if (debounceId.current) {
       clearTimeout(debounceId.current);
     }
@@ -43,6 +46,11 @@ const WhereTo = ({ onPlaceClick }) => {
     if (onPlaceClick) {
       setPlaces([]);
       onPlaceClick(place);
+      setValue(
+        `${place.number || ''} ${place.street || ''} ${place.county || ''} ${
+          place.region || ''
+        } ${place.country || ''}`
+      );
     }
   };
 
@@ -60,6 +68,7 @@ const WhereTo = ({ onPlaceClick }) => {
           returnKeyType="next"
           onChangeText={handleTextChange}
           placeholder="Đi đến"
+          value={value}
         />
       </View>
 

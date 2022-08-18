@@ -5,7 +5,7 @@ export const getPassengerByPhone = async ({ phone }) => {
 };
 
 export const updateFCMToken = async ({ id, token }) => {
-  return axiosClient.put(`/passengers/${id}`, { token });
+  return axiosClient.put(`/passengers/${id}`, { FCM_token: token });
 };
 
 export const booking = async (data) => {

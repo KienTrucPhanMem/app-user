@@ -115,7 +115,6 @@ const Home = ({ navigation }) => {
         // check `error.message` for more details.
         return;
       }
-      console.log('Received new locations', locations);
     }
   );
 
@@ -158,8 +157,6 @@ const Home = ({ navigation }) => {
         .then(async (token) => {
           try {
             const res = await updateFCMToken({ id: auth._id, token });
-
-            console.log(res);
           } catch (e) {
             console.log(e);
           }
@@ -194,8 +191,6 @@ const Home = ({ navigation }) => {
 
     return () => Location.stopLocationUpdatesAsync('UPDATE_LOCATION');
   }, []);
-
-  console.log(coordinates);
 
   return (
     <View style={gStyle.container}>
@@ -257,13 +252,42 @@ const Home = ({ navigation }) => {
             </Button>
           )}
 
-          {step == 2 && (
+          {step === 2 && (
             <Text style={styles.findingDriver}>Đang tìm tài xế ...</Text>
+          )}
+
+          {step === 3 && (
+            <View style={styles.bookingContainer}>
+              <Text style={styles.bookingTitle}>Thông tin cuốc xe</Text>
+              <Text
+                style={styles.bookingInfo}
+              >{`Tài xế: ${'Nguyễn Văn A'}`}</Text>
+              <Text
+                style={styles.bookingInfo}
+              >{`Điểm đón: ${'227 Nguyen Van Cu'}`}</Text>
+              <Text
+                style={styles.bookingInfo}
+              >{`Điểm đến: ${'227 Nguyen Van Cu'}`}</Text>
+            </View>
+          )}
+
+          {step === 4 && (
+            <View style={styles.bookingContainer}>
+              <Text style={styles.bookingTitle}>Hoàn thành</Text>
+              <Text style={styles.bookingTitle}>
+                Cảm ơn bạn đã sử dụng dịch vụ
+              </Text>
+              <Button mode="contained" onPress={() => setStep(0)}>
+                Đóng
+              </Button>
+            </View>
           )}
         </View>
       )}
 
-      <WhereTo onPlaceClick={handlePlaceClick} />
+      {(step === 0 || step === 1) && (
+        <WhereTo onPlaceClick={handlePlaceClick} />
+      )}
     </View>
   );
 };
@@ -354,6 +378,21 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 4,
     color: colors.white
+  },
+  bookingContainer: {
+    backgroundColor: '#fff',
+    padding: 8,
+    borderRadius: 4
+  },
+  bookingTitle: {
+    fontSize: 18,
+    marginBottom: 8,
+    textAlign: 'center'
+  },
+  bookingInfo: {
+    fontSize: 16,
+    marginBottom: 8,
+    fontWeight: 'bold'
   }
 });
 
@@ -396,7 +435,6 @@ async function registerForPushNotificationsAsync() {
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
   } else {
     alert('Must use physical device for Push Notifications');
   }
