@@ -1,23 +1,22 @@
+import * as Device from 'expo-device';
 import * as Location from 'expo-location';
+import * as Notifications from 'expo-notifications';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { Linking, StyleSheet, Text, View } from 'react-native';
-import MapView from 'react-native-maps';
-import { colors, device, fonts, gStyle } from '../constants';
-import { Polyline } from 'react-native-maps';
+import MapView, { Polyline } from 'react-native-maps';
 import Button from '../components/Button';
-import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
+import { colors, device, fonts, gStyle } from '../constants';
 
 // components
 import TouchText from '../components/TouchText';
 import WhereTo from '../components/WhereTo';
 
 import * as TaskManager from 'expo-task-manager';
-import { booking, updateFCMToken } from '../apis/passenger';
 import { useSelector } from 'react-redux';
-import { getPlacesReverse } from '../apis/place';
 import { getDriverById } from '../apis/driver';
+import { booking, updateFCMToken } from '../apis/passenger';
+import { getPlacesReverse } from '../apis/place';
 // icons
 
 const { PROVIDER_GOOGLE } = MapView;
@@ -215,6 +214,7 @@ const Home = ({ navigation }) => {
           {destination ? (
             <>
               <Polyline
+                geodesic
                 coordinates={[
                   coordinates,
                   {
@@ -224,9 +224,8 @@ const Home = ({ navigation }) => {
                     longitudeDelta: 0.01
                   }
                 ]}
-                strokeColor={'21E1E1'}
+                strokeColor={'#21E1E1'}
                 strokeWidth={6}
-                lineDashPattern={[1]}
               />
 
               <MapView.Marker
