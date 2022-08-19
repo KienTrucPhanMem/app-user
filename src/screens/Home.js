@@ -17,6 +17,7 @@ import * as TaskManager from 'expo-task-manager';
 import { booking, updateFCMToken } from '../apis/passenger';
 import { useSelector } from 'react-redux';
 import { getPlacesReverse } from '../apis/place';
+import { getDriverById } from '../apis/driver';
 // icons
 
 const { PROVIDER_GOOGLE } = MapView;
@@ -41,6 +42,7 @@ const Home = ({ navigation }) => {
   });
   const [destination, setDestination] = React.useState();
   const [step, setStep] = React.useState(0);
+  const [bookingInfo, setBookingInfo] = React.useState();
 
   const notificationListener = React.useRef();
   const responseListener = React.useRef();
@@ -71,20 +73,6 @@ const Home = ({ navigation }) => {
 
           country: 'VN',
           limit: 5
-        });
-
-        console.log({
-          passengerId: auth._id,
-          from: {
-            latitude: res.data.data[0].latitude,
-            longitude: res.data.data[0].longitude,
-            address: `${res.data.data[0].number || ''} ${
-              res.data.data[0].street || ''
-            } ${res.data.data[0].county || ''} ${
-              res.data.data[0].region || ''
-            } ${res.data.data[0].country || ''}`
-          },
-          to: destination
         });
 
         await booking({
@@ -165,8 +153,30 @@ const Home = ({ navigation }) => {
 
       // This listener is fired whenever a notification is received while the app is foregrounded
       notificationListener.current =
-        Notifications.addNotificationReceivedListener((notification) => {
-          console.log({ notification });
+        Notifications.addNotificationReceivedListener(async (notification) => {
+          switch (notification.request.content.data.status) {
+            case 1:
+              const driver = await getDriverById({
+                id: notification.request.content.data.driverId
+              });
+
+              setBookingInfo({
+                driver,
+                from: notification.request.content.data.from,
+                to: notification.request.content.data.to
+              });
+              setStep(3);
+
+              break;
+            case 2:
+              setBookingInfo(undefined);
+              setDestination(undefined);
+              setStep(4);
+              break;
+
+            default:
+              break;
+          }
         });
 
       // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
@@ -259,15 +269,15 @@ const Home = ({ navigation }) => {
           {step === 3 && (
             <View style={styles.bookingContainer}>
               <Text style={styles.bookingTitle}>Thông tin cuốc xe</Text>
-              <Text
-                style={styles.bookingInfo}
-              >{`Tài xế: ${'Nguyễn Văn A'}`}</Text>
-              <Text
-                style={styles.bookingInfo}
-              >{`Điểm đón: ${'227 Nguyen Van Cu'}`}</Text>
-              <Text
-                style={styles.bookingInfo}
-              >{`Điểm đến: ${'227 Nguyen Van Cu'}`}</Text>
+              <Text style={styles.bookingInfo}>{`Tài xế: ${
+                (bookingInfo && bookingInfo.driver.fullName) || ''
+              }`}</Text>
+              <Text style={styles.bookingInfo}>{`Điểm đón: ${
+                (bookingInfo && bookingInfo.from.address) || ''
+              }`}</Text>
+              <Text style={styles.bookingInfo}>{`Điểm đến: ${
+                (bookingInfo && bookingInfo.to.address) || ''
+              }`}</Text>
             </View>
           )}
 
@@ -397,27 +407,6 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
-
-// Can use this function below, OR use Expo's Push Notification Tool-> https://expo.dev/notifications
-async function sendPushNotification(expoPushToken) {
-  const message = {
-    to: expoPushToken,
-    sound: 'default',
-    title: 'Original Title',
-    body: 'And here is the body!',
-    data: { someData: 'goes here' }
-  };
-
-  await fetch('https://exp.host/--/api/v2/push/send', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Accept-encoding': 'gzip, deflate',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(message)
-  });
-}
 
 async function registerForPushNotificationsAsync() {
   let token;

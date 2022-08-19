@@ -30,7 +30,7 @@
     "expo-asset": "~8.5.0",
     "expo-barcode-scanner": "~11.3.0",
     "expo-constants": "~13.1.1",
-    "expo-device": "^4.3.0",
+    "expo-device": "~4.2.0",
     "expo-font": "~10.1.0",
     "expo-location": "~14.2.2",
     "expo-notifications": "~0.15.4",
