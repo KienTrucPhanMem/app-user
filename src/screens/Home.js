@@ -12,7 +12,6 @@ import { colors, device, fonts, gStyle } from '../constants';
 import TouchText from '../components/TouchText';
 import WhereTo from '../components/WhereTo';
 
-import * as TaskManager from 'expo-task-manager';
 import { useSelector } from 'react-redux';
 import { getDriverById } from '../apis/driver';
 import { booking, updateFCMToken } from '../apis/passenger';
@@ -45,6 +44,7 @@ const Home = ({ navigation }) => {
 
   const notificationListener = React.useRef();
   const responseListener = React.useRef();
+  const watchLocation = React.useRef();
 
   const handlePlaceClick = (place) => {
     if (place) {
@@ -94,16 +94,6 @@ const Home = ({ navigation }) => {
       }
     }
   };
-
-  TaskManager.defineTask(
-    'UPDATE_LOCATION',
-    ({ data: { locations }, error }) => {
-      if (error) {
-        // check `error.message` for more details.
-        return;
-      }
-    }
-  );
 
   //Get location
   React.useEffect(() => {
@@ -197,11 +187,27 @@ const Home = ({ navigation }) => {
 
   React.useEffect(() => {
     if (showMap)
-      Location.startLocationUpdatesAsync('UPDATE_LOCATION', {
-        deferredUpdatesInterval: 300
-      });
+      watchLocation.current = Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          distanceInterval: 0,
+          timeInterval: 200
+        },
+        (location) => {
+          console.log(location);
 
-    return () => Location.stopLocationUpdatesAsync('UPDATE_LOCATION');
+          setCoords({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01
+          });
+        }
+      );
+
+    return () => {
+      if (watchLocation.current) watchLocation.current.remove();
+    };
   }, [showMap]);
 
   return (
