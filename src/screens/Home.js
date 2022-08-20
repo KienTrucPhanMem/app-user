@@ -196,12 +196,13 @@ const Home = ({ navigation }) => {
   }, [auth]);
 
   React.useEffect(() => {
-    Location.startLocationUpdatesAsync('UPDATE_LOCATION', {
-      deferredUpdatesInterval: 300
-    });
+    if (showMap)
+      Location.startLocationUpdatesAsync('UPDATE_LOCATION', {
+        deferredUpdatesInterval: 300
+      });
 
     return () => Location.stopLocationUpdatesAsync('UPDATE_LOCATION');
-  }, []);
+  }, [showMap]);
 
   return (
     <View style={gStyle.container}>
