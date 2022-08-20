@@ -134,8 +134,10 @@ const Home = ({ navigation }) => {
       setShowMap(true);
     };
 
-    getLocation().catch(console.error);
-  }, []);
+    if (auth) {
+      getLocation().catch(console.error);
+    }
+  }, [auth]);
 
   //Get notification
   React.useEffect(() => {
