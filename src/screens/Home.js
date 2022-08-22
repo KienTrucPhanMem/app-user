@@ -166,6 +166,11 @@ const Home = ({ navigation }) => {
               break;
 
             default:
+              if (notification.request.content.data.code === 'DRIVER_CANCEL') {
+                setStep(2);
+                setBookingInfo(undefined);
+              }
+
               break;
           }
         });
