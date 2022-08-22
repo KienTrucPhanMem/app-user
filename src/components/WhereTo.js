@@ -26,8 +26,6 @@ const WhereTo = ({ onPlaceClick }) => {
         return;
       }
 
-      console.log('Call api');
-
       try {
         const res = await getPlaces({
           query: text,
@@ -53,8 +51,6 @@ const WhereTo = ({ onPlaceClick }) => {
       );
     }
   };
-
-  console.log(places);
 
   return (
     <View style={styles.container}>

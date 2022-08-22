@@ -191,16 +191,14 @@ const Home = ({ navigation }) => {
   }, [auth]);
 
   React.useEffect(() => {
-    if (showMap)
-      watchLocation.current = Location.watchPositionAsync(
+    async function startWatchLocation() {
+      watchLocation.current = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
           distanceInterval: 0,
           timeInterval: 200
         },
         (location) => {
-          console.log(location);
-
           setCoords({
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
@@ -209,6 +207,9 @@ const Home = ({ navigation }) => {
           });
         }
       );
+    }
+
+    if (showMap) startWatchLocation();
 
     return () => {
       if (watchLocation.current) watchLocation.current.remove();
