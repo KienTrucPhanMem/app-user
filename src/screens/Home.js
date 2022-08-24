@@ -20,6 +20,25 @@ import { getPlacesReverse } from '../apis/place';
 
 const { PROVIDER_GOOGLE } = MapView;
 
+function deg2rad(deg) {
+  return deg * (Math.PI / 180);
+}
+
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of the earth in km
+  const dLat = deg2rad(lat2 - lat1); // deg2rad below
+  const dLon = deg2rad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) *
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const d = R * c; // Distance in km
+  return d;
+}
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -85,7 +104,16 @@ const Home = ({ navigation }) => {
               res.data.data[0].region || ''
             } ${res.data.data[0].country || ''}`
           },
-          to: destination
+          to: destination,
+          cost:
+            Math.ceil(
+              getDistanceFromLatLonInKm(
+                res.data.data[0].latitude,
+                res.data.data[0].longitude,
+                destination.latitude,
+                destination.longitude
+              )
+            ) * 10000
         });
 
         setStep(2);
@@ -272,7 +300,16 @@ const Home = ({ navigation }) => {
         <View style={styles.bookButton}>
           {step === 1 && (
             <Button mode="contained" onPress={handleBooking}>
-              Đặt xe
+              {` Đặt xe ${
+                Math.ceil(
+                  getDistanceFromLatLonInKm(
+                    coordinates.latitude,
+                    coordinates.longitude,
+                    destination.latitude,
+                    destination.longitude
+                  )
+                ) * 10000
+              } vnd`}
             </Button>
           )}
 
